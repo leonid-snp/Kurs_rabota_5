@@ -1,3 +1,23 @@
+import requests
+
+
+def get_count_pages(api_key: str, company_id: str) -> int:
+    """
+    Получает количество страниц в файле Json
+
+    :param api_key: (str) публичный ключ к API
+    :param company_id: (str) название компании
+    :return:
+    """
+    hh_data = requests.get(api_key, params={
+        "employer_id": company_id,
+        "per_page": 100,
+        "area": 1
+    })
+
+    return hh_data.json()["pages"]
+
+
 def get_hh_data(api_key: str, company_ids: list[str]) -> list[dict]:
     """
     Получает данные о компаниях и вакансиях с помощью API HH.ru
@@ -7,7 +27,24 @@ def get_hh_data(api_key: str, company_ids: list[str]) -> list[dict]:
 
     :return: (list[dict]) список данных о компаниях и их вакансиях
     """
-    pass
+
+    vacancy = []
+    for company_id in company_ids:
+        page = 0
+        pages = get_count_pages(api_key, company_id)
+        while page != pages:
+            hh_data = requests.get(api_key, params={
+                "employer_id": company_id,
+                "page": page,
+                "per_page": 100,
+                "area": 1
+            })
+
+            print(hh_data.json())
+            vacancy.extend(hh_data.json().get('items'))
+            page += 1
+
+    return vacancy
 
 
 def create_database(db_name: str, params: dict) -> None:
