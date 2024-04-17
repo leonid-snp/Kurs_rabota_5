@@ -41,7 +41,6 @@ def get_hh_data(api_key: str, company_ids: list[str]) -> list[dict]:
                 "area": 1
             })
 
-            print(hh_data.json())
             vacancy.extend(hh_data.json().get('items'))
             page += 1
 
@@ -66,12 +65,12 @@ def create_database(db_name: str, params: dict) -> None:
 
     conn = psycopg2.connect(dbname=db_name, **params)
     with conn.cursor() as cur:
-        cur.execute(f"CREATE TABLE vacancy ("
+        cur.execute(f"CREATE TABLE vacancies ("
                     f"id SERIAL PRIMARY KEY NOT NULL,"
-                    f"name VARCHAR(60),"
-                    f"company VARCHAR(60),"
+                    f"name VARCHAR(255),"
+                    f"company_name VARCHAR(255),"
                     f"salary INTEGER,"
-                    f"link VARCHAR(255))")
+                    f"vacancy_url VARCHAR(255))")
 
     conn.commit()
     conn.close()
@@ -85,3 +84,20 @@ def save_data_to_database(data: list[dict], db_name: str, params: dict) -> None:
     :param db_name: (str) название базы данных
     :param params: (dict) параметры подключения к базе данных
     """
+    conn = psycopg2.connect(dbname=db_name, **params)
+    with conn.cursor() as cur:
+        for vacancy in data:
+            vacancy_name = vacancy["name"]
+            company_name = vacancy["employer"]["name"]
+            salary = vacancy["salary"]["to"] if vacancy["salary"] and vacancy["salary"]["to"] else None
+            vacancy_url = vacancy["alternate_url"]
+            cur.execute(
+                """
+                INSERT INTO vacancies (name, company_name, salary, vacancy_url)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (vacancy_name, company_name, salary, vacancy_url)
+            )
+
+    conn.commit()
+    conn.close()
