@@ -20,9 +20,9 @@ def main():
 
     params = config()
 
-    data = get_hh_data(api_hh_ru, company_ids)
-    print(len(data))
-    # create_database('hh_data', params)
+    # data = get_hh_data(api_hh_ru, company_ids)
+    # print(len(data))
+    create_database('hh_data', params)
     # save_data_to_database(data, 'hh_data', params)
 
 

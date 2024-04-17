@@ -1,4 +1,5 @@
 import requests
+import psycopg2
 
 
 def get_count_pages(api_key: str, company_id: str) -> int:
@@ -54,7 +55,26 @@ def create_database(db_name: str, params: dict) -> None:
     :param db_name: (str) название базы данных
     :param params: (dict) параметры подключения к базе данных
     """
-    pass
+    conn = psycopg2.connect(dbname="postgres", **params)
+    conn.autocommit = True
+    cur = conn.cursor()
+
+    cur.execute(f"DROP DATABASE IF EXISTS {db_name}")
+    cur.execute(f"CREATE DATABASE {db_name}")
+
+    conn.close()
+
+    conn = psycopg2.connect(dbname=db_name, **params)
+    with conn.cursor() as cur:
+        cur.execute(f"CREATE TABLE vacancy ("
+                    f"id SERIAL PRIMARY KEY NOT NULL,"
+                    f"name VARCHAR(60),"
+                    f"company VARCHAR(60),"
+                    f"salary INTEGER,"
+                    f"link VARCHAR(255))")
+
+    conn.commit()
+    conn.close()
 
 
 def save_data_to_database(data: list[dict], db_name: str, params: dict) -> None:
