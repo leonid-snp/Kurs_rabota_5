@@ -23,11 +23,11 @@ def main():
 
     params = config()
 
-    # data = get_hh_data(api_hh_ru, company_ids)
+    data = get_hh_data(api_hh_ru, company_ids)
     print("Создаем базу данных...\n")
-    # create_database('hh_data', params)
+    create_database('hh_data', params)
     print("Сохраняем результат поиска...\n")
-    # save_data_to_database(data, 'hh_data', params)
+    save_data_to_database(data, 'hh_data', params)
 
     print("Данные записались успешно!\n")
     answer = int(input("Список цифр для перехода по меню - (1, 2, 3, 4, 5)\n"
