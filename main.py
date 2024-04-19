@@ -23,29 +23,33 @@ def main():
 
     params = config()
 
-    data = get_hh_data(api_hh_ru, company_ids)
+    # data = get_hh_data(api_hh_ru, company_ids)
     print("Создаем базу данных...\n")
-    create_database('hh_data', params)
+    # create_database('hh_data', params)
     print("Сохраняем результат поиска...\n")
-    save_data_to_database(data, 'hh_data', params)
+    # save_data_to_database(data, 'hh_data', params)
 
-    print("Данные записались успешно!\n")
-    answer = int(input("Список цифр для перехода по меню - (1, 2, 3, 4, 5)\n"
-                       "Выберите что хотите сделать, введите цифру для перехода по меню: "))
+    print("Данные записались успешно!")
+    while True:
+        answer = int(input("\nСписок цифр для перехода по меню - (1, 2, 3, 4, 5)\n"
+                           "Для выхода из приложения введите '0'\n"
+                           "Выберите что хотите сделать, введите цифру для перехода по меню: "))
 
-    db_manager = DBManager()
+        db_manager = DBManager()
 
-    if answer == 1:
-        db_manager.get_companies_and_vacancies_count('hh_data', params)
-    elif answer == 2:
-        db_manager.get_all_vacancies('hh_data', params)
-    elif answer == 3:
-        db_manager.get_avg_salary('hh_data', params)
-    elif answer == 4:
-        db_manager.get_vacancies_with_higher_salary('hh_data', params),
-    if answer == 5:
-        word = input("Введите слово для поиска: ")
-        db_manager.get_vacancies_with_keyword('hh_data', params, word)
+        if answer == 1:
+            db_manager.get_companies_and_vacancies_count('hh_data', params)
+        elif answer == 2:
+            db_manager.get_all_vacancies('hh_data', params)
+        elif answer == 3:
+            db_manager.get_avg_salary('hh_data', params)
+        elif answer == 4:
+            db_manager.get_vacancies_with_higher_salary('hh_data', params),
+        elif answer == 5:
+            word = input("Введите слово для поиска: ")
+            db_manager.get_vacancies_with_keyword('hh_data', params, word)
+        elif answer == 0:
+            break
 
 
 if __name__ == '__main__':
